@@ -16,7 +16,7 @@ public class Product {
 
 	private String name;
 	private double price;
-	private int quantity;
+	private String category;
 
 	@Column(name = "created_at")
 	private LocalDateTime createdAt;
@@ -47,20 +47,21 @@ public class Product {
 		return price;
 	}
 
-	public int getQuantity() {
-		return quantity;
-	}
-
-	public void setQuantity(int quantity) {
-		this.quantity = quantity;
-	}
-
+	
 	public void setPrice(double price) {
 		this.price = price;
 	}
 
 	public LocalDateTime getCreatedAt() {
 		return createdAt;
+	}
+	
+	public void  setCategory(String category) {
+		this.category = category;
+	}
+	
+	public String getCategory() {
+		return category;
 	}
 
 }
