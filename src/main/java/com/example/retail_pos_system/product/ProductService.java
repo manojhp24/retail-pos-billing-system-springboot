@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.example.retail_pos_system.inventory.InventoryService;
 /**
  * It Handles business logic for product operations & CRUD - operations
  */
