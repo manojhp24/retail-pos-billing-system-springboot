@@ -29,6 +29,7 @@ public class InventoryService {
 		inventory.setProduct(product);
 		inventory.setStock(0);
 		inventory.setLastUpdated(LocalDateTime.now());
+		inventoryRepository.save(inventory);
 	}
 
 	public List<Inventory> getAllInventory() {
