@@ -11,14 +11,20 @@ import org.springframework.stereotype.Service;
 @Service
 public class ProductService {
 	private final ProductRepository repository;
+	private final InventoryService inventoryService;
 
-	public ProductService(ProductRepository repository) {
+	public ProductService(ProductRepository repository, InventoryService inventoryService) {
 		this.repository = repository;
+		this.inventoryService = inventoryService;
 	}
 
 	// Save or update the product in database
 	public Product save(Product product) {
-		return repository.save(product);
+		Product savedProduct = repository.save(product);
+
+		 inventoryService.createInventory(savedProduct.getId());
+
+		 return savedProduct;
 	}
 
 	// Fetch all the products data form database
