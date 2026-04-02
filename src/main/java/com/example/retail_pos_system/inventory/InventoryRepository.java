@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface InventoryRepository extends JpaRepository<Inventory,Long> {
 	
 	Optional<Inventory> findByProductId(Long productId);
-	
+	 void deleteByProductId(Long productId);
 
 	
 
