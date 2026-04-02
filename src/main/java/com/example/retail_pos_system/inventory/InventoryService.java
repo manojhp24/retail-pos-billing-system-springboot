@@ -7,16 +7,20 @@ import org.springframework.stereotype.Service;
 
 import com.example.retail_pos_system.product.Product;
 import com.example.retail_pos_system.product.ProductRepository;
+import com.example.retail_pos_system.stock_history.StockHistoryService;
 
 @Service
 public class InventoryService {
 	private final ProductRepository productRepository;
 
 	private final InventoryRepository inventoryRepository;
-
-	public InventoryService(ProductRepository productRepository, InventoryRepository inventoryRepository) {
+	
+	private final StockHistoryService stockHistoryService;
+	
+	public InventoryService(ProductRepository productRepository, InventoryRepository inventoryRepository,StockHistoryService stockHistoryService) {
 		this.productRepository = productRepository;
 		this.inventoryRepository = inventoryRepository;
+		this.stockHistoryService = stockHistoryService;
 
 	}
 
@@ -42,8 +46,10 @@ public class InventoryService {
 
 		inventory.setStock(inventory.getStock() + quantity);
 		inventory.setLastUpdated(LocalDateTime.now());
-
-		return inventoryRepository.save(inventory);
+			
+		stockHistoryService.saveHistory(productId, "RESTOCK", quantity);
+		
+		return inventory;
 
 	}
 

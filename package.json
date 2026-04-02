@@ -1,0 +1,7 @@
+{
+  "name": "spring-runner",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "mvnw spring-boot:run"
+  }
+}
