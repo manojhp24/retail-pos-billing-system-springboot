@@ -4,7 +4,10 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.example.retail_pos_system.inventory.InventoryRepository;
 import com.example.retail_pos_system.inventory.InventoryService;
+
+import jakarta.transaction.Transactional;
 /**
  * It Handles business logic for product operations & CRUD - operations
  */
@@ -13,10 +16,12 @@ import com.example.retail_pos_system.inventory.InventoryService;
 public class ProductService {
 	private final ProductRepository repository;
 	private final InventoryService inventoryService;
+	private final InventoryRepository inventoryRepository;
 
-	public ProductService(ProductRepository repository, InventoryService inventoryService) {
+	public ProductService(ProductRepository repository, InventoryService inventoryService,InventoryRepository inventoryRepository) {
 		this.repository = repository;
 		this.inventoryService = inventoryService;
+		this.inventoryRepository = inventoryRepository;
 	}
 
 	// Save or update the product in database
@@ -56,7 +61,9 @@ public class ProductService {
 	}
 
 	// Delete the product data by id
+	@Transactional
 	public void delete(Long id) {
+		inventoryRepository.deleteByProductId(id);
 		repository.deleteById(id);
 
 	}
