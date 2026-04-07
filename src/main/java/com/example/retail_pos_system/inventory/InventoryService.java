@@ -49,7 +49,7 @@ public class InventoryService {
 			
 		stockHistoryService.saveHistory(productId, "RESTOCK", quantity);
 		
-		return inventory;
+		return inventoryRepository.save(inventory);
 
 	}
 
@@ -59,6 +59,8 @@ public class InventoryService {
 
 		inventory.setStock(inventory.getStock() - quantity);
 		inventory.setLastUpdated(LocalDateTime.now());
+		
+		stockHistoryService.saveHistory(productId, "REDUCE", quantity);
 
 		return inventoryRepository.save(inventory);
 	}

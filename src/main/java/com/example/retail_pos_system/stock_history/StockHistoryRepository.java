@@ -11,4 +11,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface  StockHistoryRepository extends JpaRepository<StockHistory, Long> {
     List<StockHistory> findByProductId(Long productId);
+    void deleteByProductId(Long id);
 }

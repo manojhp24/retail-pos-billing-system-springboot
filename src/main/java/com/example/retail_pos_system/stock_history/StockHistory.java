@@ -25,7 +25,7 @@ public class StockHistory {
     private LocalDateTime createdAt;
 
     @ManyToOne
-    @JoinColumn(name = "product_id", unique = true)
+    @JoinColumn(name = "product_id")
     private Product product;
 
     public Long getId(){
