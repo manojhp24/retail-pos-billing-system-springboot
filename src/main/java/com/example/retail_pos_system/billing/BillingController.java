@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/billing")
+@RequestMapping("api/billing")
 public class BillingController {
 
     private final BillingService billingService;
@@ -19,9 +19,9 @@ public class BillingController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<?> createBill(@RequestBody BillingRequest req) {
-        billingService.createBill(req);
-        return ResponseEntity.ok("Bill created successfully");
+    public ResponseEntity<Billing> createBill(@RequestBody BillingRequest req) {
+        Billing bill = billingService.createBill(req);
+        return ResponseEntity.status(201).body(bill);
     }
     
     @GetMapping("/{id}")

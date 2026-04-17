@@ -18,19 +18,29 @@ import jakarta.transaction.Transactional;
 public class ProductService {
 	private final ProductRepository repository;
 	private final InventoryService inventoryService;
-	private final InventoryRepository inventoryRepository;
-	private final StockHistoryRepository stockHistoryRepository;
+//	private final InventoryRepository inventoryRepository;
+//	private final StockHistoryRepository stockHistoryRepository;
 
 	public ProductService(ProductRepository repository, InventoryService inventoryService,
 			InventoryRepository inventoryRepository, StockHistoryRepository stockHistoryRepository) {
 		this.repository = repository;
 		this.inventoryService = inventoryService;
-		this.inventoryRepository = inventoryRepository;
-		this.stockHistoryRepository = stockHistoryRepository;
+	
 	}
 
 	// Save or update the product in database
 	public Product save(Product product) {
+		
+		Product existing = repository.findByName(product.getName());
+		
+		if(existing != null) {
+			existing.setActive(true);
+			existing.setPrice(product.getPrice());
+			existing.setCategory(product.getCategory());
+			return repository.save(existing);
+		}
+		
+		
 		Product savedProduct = repository.save(product);
 
 		inventoryService.createInventory(savedProduct.getId());
@@ -67,9 +77,11 @@ public class ProductService {
 	// Delete the product data by id
 	@Transactional
 	public void delete(Long id) {
-		stockHistoryRepository.deleteByProductId(id);
-		inventoryRepository.deleteByProductId(id);
-		repository.deleteById(id);
+	    Product product = repository.findById(id).orElse(null);
 
+	    if (product == null) return;
+
+	    product.setActive(false);
+	    repository.save(product);
 	}
 }

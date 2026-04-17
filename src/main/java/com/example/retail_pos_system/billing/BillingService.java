@@ -29,7 +29,7 @@ public class BillingService {
 		this.billingRepository = billingRepository;
 	}
 
-	public void createBill(BillingRequest req) {
+	public Billing createBill(BillingRequest req) {
 		List<BillItem> items = new ArrayList<>();
 
 		double totalAmount = 0;
@@ -78,8 +78,10 @@ public class BillingService {
 			bi.setBill(bill);
 		}
 		bill.setItems(items);
-		System.out.println("Items size: " + items.size());
-		billingRepository.save(bill);
+		
+		
+		
+		return billingRepository.save(bill);
 	}
 	
 	public Billing getBillById(Long id) {

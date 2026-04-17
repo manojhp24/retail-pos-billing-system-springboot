@@ -37,7 +37,7 @@ public class InventoryService {
 	}
 
 	public List<Inventory> getAllInventory() {
-		return inventoryRepository.findAll();
+		return inventoryRepository.findByProductActiveTrue();
 	}
 
 	public Inventory restock(Long productId, int quantity) {

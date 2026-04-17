@@ -17,7 +17,7 @@ public class Product {
 	private String name;
 	private double price;
 	private String category;
-
+	private boolean active = true;
 	@Column(name = "created_at")
 	private LocalDateTime createdAt;
 
@@ -62,6 +62,13 @@ public class Product {
 	
 	public String getCategory() {
 		return category;
+	}
+	public boolean isActive() {
+	    return active;
+	}
+
+	public void setActive(boolean active) {
+	    this.active = active;
 	}
 
 }
