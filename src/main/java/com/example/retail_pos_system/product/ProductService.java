@@ -4,84 +4,89 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.example.retail_pos_system.inventory.InventoryRepository;
 import com.example.retail_pos_system.inventory.InventoryService;
-import com.example.retail_pos_system.stock_history.StockHistoryRepository;
 
 import jakarta.transaction.Transactional;
 
-/**
- * It Handles business logic for product operations & CRUD - operations
- */
-
 @Service
 public class ProductService {
-	private final ProductRepository repository;
-	private final InventoryService inventoryService;
-//	private final InventoryRepository inventoryRepository;
-//	private final StockHistoryRepository stockHistoryRepository;
 
-	public ProductService(ProductRepository repository, InventoryService inventoryService,
-			InventoryRepository inventoryRepository, StockHistoryRepository stockHistoryRepository) {
-		this.repository = repository;
-		this.inventoryService = inventoryService;
-	
-	}
+    private final ProductRepository repository;
+    private final InventoryService inventoryService;
 
-	// Save or update the product in database
-	public Product save(Product product) {
-		
-		Product existing = repository.findByName(product.getName());
-		
-		if(existing != null) {
-			existing.setActive(true);
-			existing.setPrice(product.getPrice());
-			existing.setCategory(product.getCategory());
-			return repository.save(existing);
-		}
-		
-		
-		Product savedProduct = repository.save(product);
+    public ProductService(ProductRepository repository, InventoryService inventoryService) {
+        this.repository = repository;
+        this.inventoryService = inventoryService;
+    }
 
-		inventoryService.createInventory(savedProduct.getId());
+    // Create or reactivate product
+    public Product save(Product product) {
 
-		return savedProduct;
-	}
+        Product existing = repository.findBySku(product.getSku());
 
-	// Fetch all the products data form database
-	public List<Product> getAll() {
-		return repository.findAll();
+        if (existing != null) {
+            existing.setActive(true);
+            existing.setName(product.getName());
+            existing.setCategory(product.getCategory());
+            existing.setBrand(product.getBrand());
+            existing.setCostPrice(product.getCostPrice());
+            existing.setSellingPrice(product.getSellingPrice());
+            existing.setTaxPercent(product.getTaxPercent());
+            existing.setUnit(product.getUnit());
+            existing.setUnitValue(product.getUnitValue());
+            existing.setBaseUnit(product.getBaseUnit());
 
-	}
+            existing.setDescription(product.getDescription());
+            existing.setBarcode(product.getBarcode());
 
-	// Fetch product data by its id
-	public Product getById(Long id) {
-		return repository.findById(id).orElse(null);
-	}
+            return repository.save(existing);
+        }
 
-	public Product update(Long id, Product updatedProduct) {
-		Product productExist = repository.findById(id).orElse(null);
+        Product savedProduct = repository.save(product);
 
-		if (productExist == null) {
-			return null;
-		}
+        // create inventory entry
+        inventoryService.createInventory(savedProduct.getId());
 
-		productExist.setName(updatedProduct.getName());
-		productExist.setPrice(updatedProduct.getPrice());
+        return savedProduct;
+    }
 
-		productExist.setCategory(updatedProduct.getCategory());
+    // Get all active products
+    public List<Product> getAll() {
+        return repository.findByActiveTrue();
+    }
 
-		return repository.save(productExist);
-	}
+    // Get by id
+    public Product getById(Long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+    }
 
-	// Delete the product data by id
-	@Transactional
-	public void delete(Long id) {
-	    Product product = repository.findById(id).orElse(null);
+    // Update product
+    public Product update(Long id, Product updatedProduct) {
 
-	    if (product == null) return;
+        Product productExist = getById(id);
 
-	    product.setActive(false);
-	    repository.save(product);
-	}
+        productExist.setName(updatedProduct.getName());
+        productExist.setCategory(updatedProduct.getCategory());
+        productExist.setBrand(updatedProduct.getBrand());
+        productExist.setCostPrice(updatedProduct.getCostPrice());
+        productExist.setSellingPrice(updatedProduct.getSellingPrice());
+        productExist.setTaxPercent(updatedProduct.getTaxPercent());
+        productExist.setUnit(updatedProduct.getUnit());
+        productExist.setUnitValue(updatedProduct.getUnitValue());
+        productExist.setBaseUnit(updatedProduct.getBaseUnit());
+
+        productExist.setDescription(updatedProduct.getDescription());
+        productExist.setBarcode(updatedProduct.getBarcode());
+
+        return repository.save(productExist);
+    }
+
+    // Soft delete
+    @Transactional
+    public void delete(Long id) {
+        Product product = getById(id);
+        product.setActive(false);
+        repository.save(product);
+    }
 }

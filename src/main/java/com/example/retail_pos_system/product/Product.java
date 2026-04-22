@@ -3,72 +3,163 @@ package com.example.retail_pos_system.product;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
-/**
- * Entity represents the Product table in the POS System
- */
 @Entity
 @Table(name = "products")
 public class Product {
-	@Id
-	// It used to auto-generate ID using database
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
 
-	private String name;
-	private double price;
-	private String category;
-	private boolean active = true;
-	@Column(name = "created_at")
-	private LocalDateTime createdAt;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	// It used set created time automatically before insert
-	@PrePersist
-	protected void onCreate() {
-		createdAt = LocalDateTime.now();
-	}
+    private String name;
 
-	public Long getId() {
-		return id;
-	}
+    @Column(unique = true)
+    private String sku;
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    private String category;
+    private String brand;
 
-	public String getName() {
-		return name;
-	}
+    private Double costPrice;
+    private Double sellingPrice;
+    private Double taxPercent;
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    // ✅ Unit system
+    private String unit;        // bag, pcs
+    private Double unitValue;   // 25
+    private String baseUnit;    // kg
 
-	public double getPrice() {
-		return price;
-	}
+    private String barcode;
+    private String description;
 
-	
-	public void setPrice(double price) {
-		this.price = price;
-	}
+    private boolean active = true;
 
-	public LocalDateTime getCreatedAt() {
-		return createdAt;
-	}
-	
-	public void  setCategory(String category) {
-		this.category = category;
-	}
-	
-	public String getCategory() {
-		return category;
-	}
-	public boolean isActive() {
-	    return active;
-	}
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 
-	public void setActive(boolean active) {
-	    this.active = active;
-	}
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
 
+    // ===== GETTERS & SETTERS =====
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getSku() {
+        return sku;
+    }
+
+    public void setSku(String sku) {
+        this.sku = sku;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getBrand() {
+        return brand;
+    }
+
+    public void setBrand(String brand) {
+        this.brand = brand;
+    }
+
+    public Double getCostPrice() {
+        return costPrice;
+    }
+
+    public void setCostPrice(Double costPrice) {
+        this.costPrice = costPrice;
+    }
+
+    public Double getSellingPrice() {
+        return sellingPrice;
+    }
+
+    public void setSellingPrice(Double sellingPrice) {
+        this.sellingPrice = sellingPrice;
+    }
+
+    public Double getTaxPercent() {
+        return taxPercent;
+    }
+
+    public void setTaxPercent(Double taxPercent) {
+        this.taxPercent = taxPercent;
+    }
+
+    public String getUnit() {
+        return unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
+
+    public Double getUnitValue() {
+        return unitValue;
+    }
+
+    public void setUnitValue(Double unitValue) {
+        this.unitValue = unitValue;
+    }
+
+    public String getBaseUnit() {
+        return baseUnit;
+    }
+
+    public void setBaseUnit(String baseUnit) {
+        this.baseUnit = baseUnit;
+    }
+
+    public String getBarcode() {
+        return barcode;
+    }
+
+    public void setBarcode(String barcode) {
+        this.barcode = barcode;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 }

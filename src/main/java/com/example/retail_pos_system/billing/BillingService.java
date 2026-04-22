@@ -28,62 +28,66 @@ public class BillingService {
 		this.inventoryRepository = inventoryRepository;
 		this.billingRepository = billingRepository;
 	}
-
 	public Billing createBill(BillingRequest req) {
-		List<BillItem> items = new ArrayList<>();
 
-		double totalAmount = 0;
-		
-		for (BillingRequest.Item i : req.items) {
-			Long productId = i.productId;
-			int quantity = i.quantity;
+	    List<BillItem> items = new ArrayList<>();
+	    double totalAmount = 0;
+	    double totalTax = 0;
 
-			Product product = productService.getById(productId);
-			Optional<Inventory> inventory = inventoryRepository.findByProductId(productId);
+	    for (BillingRequest.Item i : req.items) {
 
-			Inventory inv = inventory.orElseThrow(() -> new RuntimeException("Inventory not found"));
+	        Long productId = i.productId;
+	        int quantity = i.quantity;
 
-			int currentStock = inv.getStock();
+	        Product product = productService.getById(productId);
 
-			if (currentStock < quantity) {
-				throw new RuntimeException("Not Enough stock");
-			}
+	        Inventory inv = inventoryRepository.findByProductId(productId)
+	                .orElseThrow(() -> new RuntimeException("Inventory not found"));
 
-			inv.setStock(currentStock - quantity);
-			inventoryRepository.save(inv);
+	        if (inv.getStock() < quantity) {
+	            throw new RuntimeException("Not enough stock");
+	        }
 
-			double itemTotal = product.getPrice() * quantity;
-			BillItem bi = new BillItem();
+	        // Reduce stock
+	        inv.setStock(inv.getStock() - quantity);
+	        inventoryRepository.save(inv);
 
-			bi.setProduct(product);
-			bi.setQuantity(quantity);
-			bi.setPrice(product.getPrice());
-			bi.setTotal(itemTotal);
+	        double price = product.getSellingPrice();
+	        double itemTotal = price * quantity;
 
-			items.add(bi);
-			totalAmount+=itemTotal;
-		}
-		
-		double gstAmount = totalAmount * 18 / 100;
-		double grandTotal = gstAmount + totalAmount - req.discount;
+	        // GST per product
+	        double tax = itemTotal * product.getTaxPercent() / 100;
 
-		Billing bill = new Billing();
-		bill.setTotalAmount(totalAmount);
-		bill.setGstAmount(gstAmount);
-		bill.setGrandTotal(grandTotal);
-		bill.setDiscount(req.discount);
-		bill.setCreatedAt(LocalDateTime.now());
-		
-		for(BillItem bi:items) {
-			bi.setBill(bill);
-		}
-		bill.setItems(items);
-		
-		
-		
-		return billingRepository.save(bill);
+	        BillItem bi = new BillItem();
+	        bi.setProduct(product);
+	        bi.setQuantity(quantity);
+	        bi.setPrice(price);
+	        bi.setTotal(itemTotal);
+	      
+
+	        items.add(bi);
+
+	        totalAmount += itemTotal;
+	        totalTax += tax;
+	    }
+
+	    double grandTotal = totalAmount + totalTax - req.discount;
+
+	    Billing bill = new Billing();
+	    bill.setTotalAmount(totalAmount);
+	    bill.setGstAmount(totalTax);
+	    bill.setGrandTotal(grandTotal);
+	    bill.setDiscount(req.discount);
+	    bill.setCreatedAt(LocalDateTime.now());
+
+	    for (BillItem bi : items) {
+	        bi.setBill(bill);
+	    }
+
+	    bill.setItems(items);
+
+	    return billingRepository.save(bill);
 	}
-	
 	public Billing getBillById(Long id) {
 	    return billingRepository.findBillWithItems(id);
 	}
