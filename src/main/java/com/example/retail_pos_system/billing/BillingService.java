@@ -33,6 +33,10 @@ public class BillingService {
 	    List<BillItem> items = new ArrayList<>();
 	    double totalAmount = 0;
 	    double totalTax = 0;
+	    
+	    if(req.customerName == null || req.customerName.isBlank()) {
+	    	throw new RuntimeException("Customer name required");
+	    }
 
 	    for (BillingRequest.Item i : req.items) {
 
@@ -74,6 +78,8 @@ public class BillingService {
 	    double grandTotal = totalAmount + totalTax - req.discount;
 
 	    Billing bill = new Billing();
+	    bill.setCustomerName(req.customerName);
+	    bill.setCustomerPhone(req.customerPhone);
 	    bill.setTotalAmount(totalAmount);
 	    bill.setGstAmount(totalTax);
 	    bill.setGrandTotal(grandTotal);

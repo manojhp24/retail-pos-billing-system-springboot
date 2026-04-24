@@ -28,6 +28,9 @@ public class Billing {
 	private double discount;
 
 	private double grandTotal;
+	
+	private String customerName;
+	private String customerPhone;
 
 	private LocalDateTime createdAt;
 	
@@ -90,6 +93,22 @@ public class Billing {
 	public void setItems(List<BillItem> items) {
 		this.items = items;
 
+	}
+	
+	public String getCustomerName() {
+	    return customerName;
+	}
+
+	public void setCustomerName(String customerName) {
+	    this.customerName = customerName;
+	}
+
+	public String getCustomerPhone() {
+	    return customerPhone;
+	}
+
+	public void setCustomerPhone(String customerPhone) {
+	    this.customerPhone = customerPhone;
 	}
 
 

@@ -6,6 +6,9 @@ public class BillingRequest {
 	public List<Item> items;
 	public double discount;
 	
+	 public String customerName;
+	    public String customerPhone;
+	
 	public static class Item {
 		public Long productId;
         public int quantity;
